@@ -24,6 +24,22 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+      
+    - name: Bump release version
+      id: bump_version
+      uses: christian-draeger/increment-semantic-version@1.1.0
+      with:
+        current-version: '2.0.0'
+        version-fragment: 'feature'
+          
+    - name: Docker Build & Push Action
+      uses: mr-smithers-excellent/docker-build-push@v6.2
+      with:
+        image: swapnilsahare/my-app
+        registry: docker.io
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+      
 
   deploy:
      runs-on: ubuntu-latest
@@ -58,3 +74,4 @@ jobs:
         name: Test-Reports
         path: app/build/reports
       if: always()
+  
